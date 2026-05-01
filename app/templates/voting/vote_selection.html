@@ -6,6 +6,17 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-10">
+            <!-- Timer Alert -->
+            <div class="alert alert-warning mb-3" id="timerAlert">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-clock"></i> <strong>Time Remaining:</strong></span>
+                    <span class="fs-4" id="timerDisplay">2:00</span>
+                </div>
+                <div class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" id="timerProgress" role="progressbar" style="width: 100%"></div>
+                </div>
+            </div>
+
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><i class="bi bi-person-check"></i> Cast Your Vote</h4>
@@ -93,6 +104,9 @@
 
 {% block extra_js %}
 <script>
+// ===================================
+// NOMINEE SELECTION
+// ===================================
 function selectNominee(gender, nomineeId) {
     const radio = document.getElementById(gender + '_' + nomineeId);
     radio.checked = true;
@@ -113,5 +127,147 @@ document.querySelectorAll('input[type="radio"]').forEach(radio => {
         this.closest('.nominee-card').classList.add('selected');
     });
 });
+
+// ===================================
+// VOTING TIMER (2 MINUTES)
+// ===================================
+const TOTAL_TIME = 120; // 2 minutes in seconds
+const WARNING_TIME = 10; // Flash warning at 10 seconds
+let timeRemaining = TOTAL_TIME;
+let timerInterval;
+
+const timerDisplay = document.getElementById('timerDisplay');
+const timerAlert = document.getElementById('timerAlert');
+const timerProgress = document.getElementById('timerProgress');
+const voteForm = document.getElementById('voteForm');
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function updateTimer() {
+    timeRemaining--;
+
+    // Update display
+    timerDisplay.textContent = formatTime(timeRemaining);
+
+    // Update progress bar
+    const percentage = (timeRemaining / TOTAL_TIME) * 100;
+    timerProgress.style.width = percentage + '%';
+
+    // Change progress bar color based on time remaining
+    if (timeRemaining <= WARNING_TIME) {
+        timerProgress.classList.remove('bg-success', 'bg-warning');
+        timerProgress.classList.add('bg-danger');
+        timerAlert.classList.remove('alert-warning', 'alert-info');
+        timerAlert.classList.add('alert-danger');
+
+        // Flash effect when less than 10 seconds
+        timerAlert.classList.add('flash-warning');
+    } else if (timeRemaining <= 30) {
+        timerProgress.classList.remove('bg-success');
+        timerProgress.classList.add('bg-warning');
+        timerAlert.classList.remove('alert-info');
+        timerAlert.classList.add('alert-warning');
+    }
+
+    // Time's up!
+    if (timeRemaining <= 0) {
+        clearInterval(timerInterval);
+        handleTimeExpired();
+    }
+}
+
+function handleTimeExpired() {
+    // Disable form submission
+    const submitButton = voteForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="bi bi-clock-history"></i> Time Expired';
+
+    // Show timeout message
+    timerDisplay.textContent = '0:00';
+    timerAlert.classList.add('alert-danger');
+    timerAlert.innerHTML = `
+        <div class="text-center">
+            <h5><i class="bi bi-clock-history"></i> Time Expired!</h5>
+            <p class="mb-2">Your voting time has expired. Please start over.</p>
+            <a href="{{ url_for('voting.index') }}" class="btn btn-danger">
+                <i class="bi bi-arrow-clockwise"></i> Start Over
+            </a>
+        </div>
+    `;
+
+    // Disable all nominee selections
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.disabled = true;
+    });
+
+    // Optional: Play alert sound
+    playAlertSound();
+}
+
+function playAlertSound() {
+    // Create a simple beep sound
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+// Start the timer when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    timerInterval = setInterval(updateTimer, 1000);
+
+    // Warn user if they try to leave
+    window.addEventListener('beforeunload', function(e) {
+        if (timeRemaining > 0 && timeRemaining < TOTAL_TIME) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+});
+
+// Stop timer when form is submitted
+voteForm.addEventListener('submit', function() {
+    clearInterval(timerInterval);
+});
 </script>
+
+<style>
+/* Flashing animation for warning */
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.flash-warning {
+    animation: flash 0.5s infinite;
+}
+
+/* Pulse animation for timer display when warning */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.alert-danger #timerDisplay {
+    animation: pulse 0.5s infinite;
+    font-weight: bold;
+    color: #dc3545;
+}
+</style>
 {% endblock %}

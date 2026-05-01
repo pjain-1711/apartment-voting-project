@@ -68,13 +68,15 @@ def vote():
         flash('There are no nominees for your wing. Please contact the admin.', 'error')
         return redirect(url_for('voting.index'))
 
-    # Store voter info in session
+    # Store voter info and timer start time in session
+    from datetime import datetime
     session['voter_info'] = {
         'name': voter_name,
         'flat_number': flat_number,
         'wing_id': wing_id,
         'phone_number': phone_number
     }
+    session['timer_start'] = datetime.utcnow().timestamp()
 
     return render_template('voting/vote_selection.html',
                            voter_name=voter_name,
@@ -88,8 +90,18 @@ def confirm():
     """Show confirmation page before final submission"""
     # Check session
     voter_info = session.get('voter_info')
-    if not voter_info:
+    timer_start = session.get('timer_start')
+
+    if not voter_info or not timer_start:
         flash('Session expired. Please start again.', 'error')
+        return redirect(url_for('voting.index'))
+
+    # Check if timer has expired (2 minutes = 120 seconds)
+    from datetime import datetime
+    elapsed_time = datetime.utcnow().timestamp() - timer_start
+    if elapsed_time > 120:
+        session.clear()
+        flash('Voting time expired. Please start again.', 'error')
         return redirect(url_for('voting.index'))
 
     # Get selected nominees
@@ -131,9 +143,18 @@ def submit():
     # Get voter info and selection from session
     voter_info = session.get('voter_info')
     vote_selection = session.get('vote_selection')
+    timer_start = session.get('timer_start')
 
-    if not voter_info or not vote_selection:
+    if not voter_info or not vote_selection or not timer_start:
         flash('Session expired. Please start again.', 'error')
+        return redirect(url_for('voting.index'))
+
+    # Final timer check before submission
+    from datetime import datetime
+    elapsed_time = datetime.utcnow().timestamp() - timer_start
+    if elapsed_time > 120:
+        session.clear()
+        flash('Voting time expired. Your vote was not recorded.', 'error')
         return redirect(url_for('voting.index'))
 
     # Double-check for duplicate vote (in case of multiple tabs)
