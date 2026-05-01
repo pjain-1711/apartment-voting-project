@@ -103,32 +103,32 @@ def confirm():
         flash('Voting time expired. Please start again.', 'error')
         return redirect(url_for('voting.index'))
 
-    # Get selected nominees
-    male_nominee_id = request.form.get('male_nominee_id', type=int)
-    female_nominee_id = request.form.get('female_nominee_id', type=int)
+    # Get selected nominees (now multiple selections allowed)
+    male_nominee_ids = request.form.getlist('male_nominee_ids', type=int)
+    female_nominee_ids = request.form.getlist('female_nominee_ids', type=int)
 
     wing_id = voter_info['wing_id']
 
     # Validate selection
-    is_valid, error_message = validate_vote_selection(male_nominee_id, female_nominee_id, wing_id)
+    is_valid, error_message = validate_vote_selection(male_nominee_ids, female_nominee_ids, wing_id)
     if not is_valid:
         flash(error_message, 'error')
         return redirect(url_for('voting.index'))
 
     # Get nominee details for confirmation
-    male_nominee = Nominee.query.get(male_nominee_id) if male_nominee_id else None
-    female_nominee = Nominee.query.get(female_nominee_id) if female_nominee_id else None
+    male_nominees = [Nominee.query.get(nid) for nid in male_nominee_ids] if male_nominee_ids else []
+    female_nominees = [Nominee.query.get(nid) for nid in female_nominee_ids] if female_nominee_ids else []
 
     # Store selections in session
     session['vote_selection'] = {
-        'male_nominee_id': male_nominee_id,
-        'female_nominee_id': female_nominee_id
+        'male_nominee_ids': male_nominee_ids,
+        'female_nominee_ids': female_nominee_ids
     }
 
     return render_template('voting/confirmation.html',
                            voter_info=voter_info,
-                           male_nominee=male_nominee,
-                           female_nominee=female_nominee)
+                           male_nominees=male_nominees,
+                           female_nominees=female_nominees)
 
 
 @bp.route('/submit', methods=['POST'])
@@ -176,20 +176,22 @@ def submit():
         db.session.add(voter)
         db.session.flush()  # Get voter ID
 
-        # Create vote records
-        if vote_selection['male_nominee_id']:
-            male_vote = Vote(
-                voter_id=voter.id,
-                nominee_id=vote_selection['male_nominee_id']
-            )
-            db.session.add(male_vote)
+        # Create vote records (multiple votes now supported)
+        for male_nominee_id in vote_selection.get('male_nominee_ids', []):
+            if male_nominee_id:
+                male_vote = Vote(
+                    voter_id=voter.id,
+                    nominee_id=male_nominee_id
+                )
+                db.session.add(male_vote)
 
-        if vote_selection['female_nominee_id']:
-            female_vote = Vote(
-                voter_id=voter.id,
-                nominee_id=vote_selection['female_nominee_id']
-            )
-            db.session.add(female_vote)
+        for female_nominee_id in vote_selection.get('female_nominee_ids', []):
+            if female_nominee_id:
+                female_vote = Vote(
+                    voter_id=voter.id,
+                    nominee_id=female_nominee_id
+                )
+                db.session.add(female_vote)
 
         db.session.commit()
 

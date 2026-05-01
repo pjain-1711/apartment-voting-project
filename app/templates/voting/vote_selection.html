@@ -26,15 +26,15 @@
                     <form method="POST" action="{{ url_for('voting.confirm') }}" id="voteForm">
                         <!-- Male Nominees Section -->
                         <div class="mb-5">
-                            <h5 class="mb-3"><i class="bi bi-person text-primary"></i> Male Representatives</h5>
+                            <h5 class="mb-3"><i class="bi bi-person text-primary"></i> Male Representatives <small class="text-muted">(Select up to 2)</small></h5>
                             {% if male_nominees %}
                             <div class="row g-3">
                                 {% for nominee in male_nominees %}
                                 <div class="col-md-6">
-                                    <div class="nominee-card card h-100" onclick="selectNominee('male', {{ nominee.id }})">
+                                    <div class="nominee-card card h-100" onclick="toggleNominee('male', {{ nominee.id }})">
                                         <div class="card-body">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="male_nominee_id" value="{{ nominee.id }}" id="male_{{ nominee.id }}">
+                                                <input class="form-check-input" type="checkbox" name="male_nominee_ids" value="{{ nominee.id }}" id="male_{{ nominee.id }}">
                                                 <label class="form-check-label w-100" for="male_{{ nominee.id }}">
                                                     <h6 class="mb-1">{{ nominee.name }}</h6>
                                                     <small class="text-muted">
@@ -57,15 +57,15 @@
 
                         <!-- Female Nominees Section -->
                         <div class="mb-4">
-                            <h5 class="mb-3"><i class="bi bi-person text-danger"></i> Female Representatives</h5>
+                            <h5 class="mb-3"><i class="bi bi-person text-success"></i> Female Representatives <small class="text-muted">(Select up to 2)</small></h5>
                             {% if female_nominees %}
                             <div class="row g-3">
                                 {% for nominee in female_nominees %}
                                 <div class="col-md-6">
-                                    <div class="nominee-card card h-100" onclick="selectNominee('female', {{ nominee.id }})">
+                                    <div class="nominee-card card h-100" onclick="toggleNominee('female', {{ nominee.id }})">
                                         <div class="card-body">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="female_nominee_id" value="{{ nominee.id }}" id="female_{{ nominee.id }}">
+                                                <input class="form-check-input" type="checkbox" name="female_nominee_ids" value="{{ nominee.id }}" id="female_{{ nominee.id }}">
                                                 <label class="form-check-label w-100" for="female_{{ nominee.id }}">
                                                     <h6 class="mb-1">{{ nominee.name }}</h6>
                                                     <small class="text-muted">
@@ -105,26 +105,53 @@
 {% block extra_js %}
 <script>
 // ===================================
-// NOMINEE SELECTION
+// NOMINEE SELECTION (UP TO 2 EACH)
 // ===================================
-function selectNominee(gender, nomineeId) {
-    const radio = document.getElementById(gender + '_' + nomineeId);
-    radio.checked = true;
+const MAX_SELECTIONS = 2;
+
+function toggleNominee(gender, nomineeId) {
+    const checkbox = document.getElementById(gender + '_' + nomineeId);
+    const checkboxName = gender + '_nominee_ids';
+    const selectedBoxes = document.querySelectorAll(`input[name="${checkboxName}"]:checked`);
+
+    // If trying to check and already at max, prevent it
+    if (!checkbox.checked && selectedBoxes.length >= MAX_SELECTIONS) {
+        alert(`You can select a maximum of ${MAX_SELECTIONS} ${gender} representatives.`);
+        return;
+    }
+
+    // Toggle the checkbox
+    checkbox.checked = !checkbox.checked;
 
     // Update visual selection
-    document.querySelectorAll('.nominee-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    radio.closest('.nominee-card').classList.add('selected');
+    updateVisualSelection();
 }
 
-// Add visual feedback when radio button is selected
-document.querySelectorAll('input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        document.querySelectorAll('.nominee-card').forEach(card => {
+function updateVisualSelection() {
+    document.querySelectorAll('.nominee-card').forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        if (checkbox && checkbox.checked) {
+            card.classList.add('selected');
+        } else {
             card.classList.remove('selected');
-        });
-        this.closest('.nominee-card').classList.add('selected');
+        }
+    });
+}
+
+// Add visual feedback when checkbox is changed
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const gender = this.name.replace('_nominee_ids', '');
+        const selectedCount = document.querySelectorAll(`input[name="${this.name}"]:checked`).length;
+
+        // Prevent more than MAX_SELECTIONS
+        if (this.checked && selectedCount > MAX_SELECTIONS) {
+            this.checked = false;
+            alert(`You can select a maximum of ${MAX_SELECTIONS} ${gender} representatives.`);
+            return;
+        }
+
+        updateVisualSelection();
     });
 });
 
@@ -247,6 +274,22 @@ voteForm.addEventListener('submit', function() {
 </script>
 
 <style>
+/* Nominee card selection */
+.nominee-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nominee-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.nominee-card.selected {
+    border: 2px solid #0d6efd;
+    background-color: #e7f1ff;
+}
+
 /* Flashing animation for warning */
 @keyframes flash {
     0%, 100% { opacity: 1; }

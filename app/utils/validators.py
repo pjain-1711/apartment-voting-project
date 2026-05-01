@@ -86,32 +86,41 @@ def get_next_counter_number():
     return (last_voter.counter_number + 1) if last_voter else 1
 
 
-def validate_vote_selection(male_nominee_id, female_nominee_id, wing_id):
+def validate_vote_selection(male_nominee_ids, female_nominee_ids, wing_id):
     """
-    Validate vote selection
+    Validate vote selection (now supports multiple selections - up to 2 each)
     Returns: (is_valid, error_message)
     """
     nominees = get_nominees_by_wing_and_gender(wing_id)
+    MAX_SELECTIONS = 2
 
-    # Check if male vote is required and provided
+    # Validate male nominees
     if len(nominees['male']) > 0:
-        if not male_nominee_id:
-            return False, "Please select a male nominee"
+        if not male_nominee_ids or len(male_nominee_ids) == 0:
+            return False, "Please select at least one male nominee"
 
-        # Verify male nominee exists and belongs to correct wing
-        male_nominee = Nominee.query.get(male_nominee_id)
-        if not male_nominee or male_nominee.wing_id != wing_id or male_nominee.gender != 'male':
-            return False, "Invalid male nominee selection"
+        if len(male_nominee_ids) > MAX_SELECTIONS:
+            return False, f"You can select a maximum of {MAX_SELECTIONS} male nominees"
 
-    # Check if female vote is required and provided
+        # Verify each male nominee exists and belongs to correct wing
+        for male_nominee_id in male_nominee_ids:
+            male_nominee = Nominee.query.get(male_nominee_id)
+            if not male_nominee or male_nominee.wing_id != wing_id or male_nominee.gender != 'male':
+                return False, "Invalid male nominee selection"
+
+    # Validate female nominees
     if len(nominees['female']) > 0:
-        if not female_nominee_id:
-            return False, "Please select a female nominee"
+        if not female_nominee_ids or len(female_nominee_ids) == 0:
+            return False, "Please select at least one female nominee"
 
-        # Verify female nominee exists and belongs to correct wing
-        female_nominee = Nominee.query.get(female_nominee_id)
-        if not female_nominee or female_nominee.wing_id != wing_id or female_nominee.gender != 'female':
-            return False, "Invalid female nominee selection"
+        if len(female_nominee_ids) > MAX_SELECTIONS:
+            return False, f"You can select a maximum of {MAX_SELECTIONS} female nominees"
+
+        # Verify each female nominee exists and belongs to correct wing
+        for female_nominee_id in female_nominee_ids:
+            female_nominee = Nominee.query.get(female_nominee_id)
+            if not female_nominee or female_nominee.wing_id != wing_id or female_nominee.gender != 'female':
+                return False, "Invalid female nominee selection"
 
     # Edge case: if no nominees at all
     if len(nominees['male']) == 0 and len(nominees['female']) == 0:

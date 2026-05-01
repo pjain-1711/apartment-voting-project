@@ -19,25 +19,37 @@
                     </ul>
                     <h5>Your Selections:</h5>
                     <div class="row g-3 mb-4">
-                        {% if male_nominee %}
-                        <div class="col-md-6">
-                            <div class="card border-primary">
-                                <div class="card-body">
-                                    <h6 class="text-primary"><i class="bi bi-person"></i> Male Representative</h6>
-                                    <p class="mb-0"><strong>{{ male_nominee.name }}</strong></p>
-                                    <small class="text-muted">Flat {{ male_nominee.flat_number }}</small>
+                        {% if male_nominees %}
+                        <div class="col-12">
+                            <h6 class="text-primary"><i class="bi bi-person"></i> Male Representatives</h6>
+                            <div class="row g-2">
+                                {% for male_nominee in male_nominees %}
+                                <div class="col-md-6">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <p class="mb-0"><strong>{{ male_nominee.name }}</strong></p>
+                                            <small class="text-muted">Flat {{ male_nominee.flat_number }}</small>
+                                        </div>
+                                    </div>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                         {% endif %}
-                        {% if female_nominee %}
-                        <div class="col-md-6">
-                            <div class="card border-danger">
-                                <div class="card-body">
-                                    <h6 class="text-danger"><i class="bi bi-person"></i> Female Representative</h6>
-                                    <p class="mb-0"><strong>{{ female_nominee.name }}</strong></p>
-                                    <small class="text-muted">Flat {{ female_nominee.flat_number }}</small>
+                        {% if female_nominees %}
+                        <div class="col-12 mt-3">
+                            <h6 class="text-success"><i class="bi bi-person"></i> Female Representatives</h6>
+                            <div class="row g-2">
+                                {% for female_nominee in female_nominees %}
+                                <div class="col-md-6">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <p class="mb-0"><strong>{{ female_nominee.name }}</strong></p>
+                                            <small class="text-muted">Flat {{ female_nominee.flat_number }}</small>
+                                        </div>
+                                    </div>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                         {% endif %}
