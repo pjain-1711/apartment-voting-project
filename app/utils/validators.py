@@ -19,22 +19,33 @@ def extract_wing_from_flat(flat_number):
     if wing_number == 0:
         return None, "Flat number cannot start with 0"
 
-    # Try to find wing by first digit directly (for wings named "1", "2", "3", etc.)
-    wing_number_str = str(wing_number)
-    wing = Wing.query.filter_by(name=wing_number_str).first()
+    # Try multiple wing name formats
+    possible_wing_names = [
+        str(wing_number),              # "1", "2", "3"
+        f"WING {wing_number}",         # "WING 1", "WING 2", "WING 3"
+        f"Wing {wing_number}",         # "Wing 1", "Wing 2", "Wing 3"
+        f"wing {wing_number}",         # "wing 1", "wing 2", "wing 3"
+    ]
 
-    # If not found, try letter mapping (1=A, 2=B, etc.)
-    if not wing:
-        wing_map = {
-            1: 'A', 2: 'B', 3: 'C', 4: 'D',
-            5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I'
-        }
-        wing_name = wing_map.get(wing_number)
-        if wing_name:
-            wing = Wing.query.filter_by(name=wing_name).first()
+    # Also add letter mapping (1=A, 2=B, etc.)
+    wing_map = {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I'}
+    wing_letter = wing_map.get(wing_number)
+    if wing_letter:
+        possible_wing_names.extend([
+            wing_letter,                   # "A", "B", "C"
+            f"WING {wing_letter}",         # "WING A", "WING B"
+            f"Wing {wing_letter}",         # "Wing A", "Wing B"
+        ])
+
+    # Try to find wing with any of these names
+    wing = None
+    for wing_name in possible_wing_names:
+        wing = Wing.query.filter_by(name=wing_name).first()
+        if wing:
+            break
 
     if not wing:
-        return None, f"Wing for flat starting with {wing_number} does not exist in the system"
+        return None, f"Wing for flat starting with {wing_number} does not exist in the system. Please add a wing named 'WING {wing_number}' or '{wing_number}' in admin panel."
 
     if not wing.is_active:
         return None, f"Wing {wing.name} is not active"
