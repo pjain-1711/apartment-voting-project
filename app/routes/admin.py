@@ -275,30 +275,57 @@ def declare_results():
 
     for wing in wings:
         for gender in ['male', 'female']:
-            # Count votes for each nominee
-            vote_counts = db.session.query(
-                Nominee.id,
-                Nominee.name,
-                func.count(Vote.id).label('vote_count')
-            ).outerjoin(Vote).filter(
-                Nominee.wing_id == wing.id,
-                Nominee.gender == gender
-            ).group_by(Nominee.id, Nominee.name).order_by(
-                func.count(Vote.id).desc(),
-                Nominee.name
-            ).all()
+            # Get all nominees for this wing and gender
+            nominees = Nominee.query.filter_by(wing_id=wing.id, gender=gender).all()
+            nominee_count = len(nominees)
 
-            # Create result records
-            for rank, (nominee_id, name, vote_count) in enumerate(vote_counts, 1):
-                result = Result(
-                    wing_id=wing.id,
-                    nominee_id=nominee_id,
-                    gender=gender,
-                    vote_count=vote_count,
-                    rank=rank,
-                    is_winner=(rank <= winners_per_gender)
-                )
-                db.session.add(result)
+            # Handle edge case: no nominees
+            if nominee_count == 0:
+                # No nominees - seat remains empty, nothing to record
+                continue
+
+            # Handle edge case: fewer nominees than winner slots
+            if nominee_count <= winners_per_gender:
+                # Auto-select all nominees as winners
+                for rank, nominee in enumerate(nominees, 1):
+                    # Get actual vote count (even if they auto-win)
+                    vote_count = Vote.query.filter_by(nominee_id=nominee.id).count()
+
+                    result = Result(
+                        wing_id=wing.id,
+                        nominee_id=nominee.id,
+                        gender=gender,
+                        vote_count=vote_count,
+                        rank=rank,
+                        is_winner=True  # All are winners when not enough nominees
+                    )
+                    db.session.add(result)
+            else:
+                # Normal case: more nominees than winner slots
+                # Count votes for each nominee
+                vote_counts = db.session.query(
+                    Nominee.id,
+                    Nominee.name,
+                    func.count(Vote.id).label('vote_count')
+                ).outerjoin(Vote).filter(
+                    Nominee.wing_id == wing.id,
+                    Nominee.gender == gender
+                ).group_by(Nominee.id, Nominee.name).order_by(
+                    func.count(Vote.id).desc(),
+                    Nominee.name
+                ).all()
+
+                # Create result records - top N are winners
+                for rank, (nominee_id, name, vote_count) in enumerate(vote_counts, 1):
+                    result = Result(
+                        wing_id=wing.id,
+                        nominee_id=nominee_id,
+                        gender=gender,
+                        vote_count=vote_count,
+                        rank=rank,
+                        is_winner=(rank <= winners_per_gender)
+                    )
+                    db.session.add(result)
 
     db.session.commit()
 
