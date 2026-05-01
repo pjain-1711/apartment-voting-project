@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, send_fil
 from flask_login import login_required
 from app.models import Result, Wing, ConfigSetting
 from app.utils.excel_export import create_anonymous_export, create_detailed_export, create_results_export
+from app.utils.pdf_export import create_results_pdf
 import io
 from datetime import datetime
 
@@ -120,3 +121,25 @@ def export_results():
     except Exception as e:
         flash('Error generating export file', 'error')
         return redirect(url_for('admin.dashboard'))
+
+
+@bp.route('/export/pdf')
+def export_results_pdf():
+    """Export election results to PDF (public access)"""
+    if not ConfigSetting.are_results_visible():
+        flash('Results have not been declared yet', 'error')
+        return redirect(url_for('voting.landing'))
+
+    try:
+        pdf_buffer = create_results_pdf()
+        filename = f'election_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=filename
+        )
+    except Exception as e:
+        flash('Error generating PDF file', 'error')
+        return redirect(url_for('results.view_results'))

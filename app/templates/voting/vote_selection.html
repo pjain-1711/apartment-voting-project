@@ -57,7 +57,7 @@
 
                         <!-- Female Nominees Section -->
                         <div class="mb-4">
-                            <h5 class="mb-3"><i class="bi bi-person text-success"></i> Female Representatives <small class="text-muted">(Select up to 2)</small></h5>
+                            <h5 class="mb-3"><i class="bi bi-person" style="color: #ff69b4;"></i> Female Representatives <small class="text-muted">(Select up to 2)</small></h5>
                             {% if female_nominees %}
                             <div class="row g-3">
                                 {% for nominee in female_nominees %}
@@ -254,22 +254,26 @@ function playAlertSound() {
     oscillator.stop(audioContext.currentTime + 0.5);
 }
 
+// Beforeunload handler function
+function beforeUnloadHandler(e) {
+    if (timeRemaining > 0 && timeRemaining < TOTAL_TIME) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+}
+
 // Start the timer when page loads
 document.addEventListener('DOMContentLoaded', function() {
     timerInterval = setInterval(updateTimer, 1000);
 
     // Warn user if they try to leave
-    window.addEventListener('beforeunload', function(e) {
-        if (timeRemaining > 0 && timeRemaining < TOTAL_TIME) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
+    window.addEventListener('beforeunload', beforeUnloadHandler);
 });
 
-// Stop timer when form is submitted
+// Stop timer when form is submitted and remove beforeunload warning
 voteForm.addEventListener('submit', function() {
     clearInterval(timerInterval);
+    window.removeEventListener('beforeunload', beforeUnloadHandler);
 });
 </script>
 

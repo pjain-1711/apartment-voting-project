@@ -28,7 +28,7 @@ def index():
 
 
 @bp.route('/vote', methods=['POST'])
-@limiter.limit("5 per hour")
+@limiter.limit("500 per hour")
 def vote():
     """Handle voter information and show nominees"""
     # Check if voting is enabled

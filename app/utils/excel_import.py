@@ -64,12 +64,13 @@ def import_nominees_from_excel(file):
                     error_count += 1
                     continue
 
-                # Find wing in database
+                # Find or create wing in database
                 wing = Wing.query.filter_by(name=wing_name).first()
                 if not wing:
-                    errors.append(f'Row {idx+2}: Wing "{wing_name}" does not exist in system')
-                    error_count += 1
-                    continue
+                    # Auto-create wing if it doesn't exist
+                    wing = Wing(name=wing_name, is_active=True)
+                    db.session.add(wing)
+                    db.session.flush()  # Get the wing ID without committing
 
                 if not wing.is_active:
                     errors.append(f'Row {idx+2}: Wing "{wing_name}" is not active')

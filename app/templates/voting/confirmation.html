@@ -38,11 +38,11 @@
                         {% endif %}
                         {% if female_nominees %}
                         <div class="col-12 mt-3">
-                            <h6 class="text-success"><i class="bi bi-person"></i> Female Representatives</h6>
+                            <h6 style="color: #ff69b4;"><i class="bi bi-person"></i> Female Representatives</h6>
                             <div class="row g-2">
                                 {% for female_nominee in female_nominees %}
                                 <div class="col-md-6">
-                                    <div class="card border-success">
+                                    <div class="card" style="border-color: #ff69b4;">
                                         <div class="card-body">
                                             <p class="mb-0"><strong>{{ female_nominee.name }}</strong></p>
                                             <small class="text-muted">Flat {{ female_nominee.flat_number }}</small>
