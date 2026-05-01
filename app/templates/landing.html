@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Assetz Sun and Sanctum{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Assetz Sun and Sanctum" style="max-width: 300px; height: auto;" class="mb-4" onerror="this.style.display='none'">
+                <h1 class="display-4 fw-bold mb-3">Wing Representative Elections</h1>
+                <p class="lead text-muted">Assetz Sun and Sanctum Apartment Complex</p>
+            </div>
+
+            <!-- Main Options -->
+            <div class="row g-4 mb-5">
+                <!-- Voting Card -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-lg border-0 hover-card">
+                        <div class="card-body text-center p-5">
+                            <div class="mb-4">
+                                <i class="bi bi-person-check-fill text-primary" style="font-size: 5rem;"></i>
+                            </div>
+                            <h2 class="card-title mb-3">Cast Your Vote</h2>
+                            <p class="card-text text-muted mb-4">
+                                Vote for your wing representatives.<br>
+                                Each flat can vote for one male and one female representative.
+                            </p>
+                            <a href="{{ url_for('voting.index') }}" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-arrow-right-circle"></i> Start Voting
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Card -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-lg border-0 hover-card">
+                        <div class="card-body text-center p-5">
+                            <div class="mb-4">
+                                <i class="bi bi-shield-lock-fill text-success" style="font-size: 5rem;"></i>
+                            </div>
+                            <h2 class="card-title mb-3">Admin Panel</h2>
+                            <p class="card-text text-muted mb-4">
+                                Manage elections, nominees, and view results.<br>
+                                Admin login required.
+                            </p>
+                            <a href="{{ url_for('admin.login') }}" class="btn btn-success btn-lg px-5">
+                                <i class="bi bi-lock"></i> Admin Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Links -->
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body text-center p-4">
+                            <h5 class="mb-3">Quick Links</h5>
+                            <div class="d-flex flex-wrap justify-content-center gap-3">
+                                <a href="{{ url_for('results.view_results') }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-trophy"></i> View Results
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="text-center mt-5">
+                <div class="alert alert-info d-inline-block">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Note:</strong> Each flat can vote only once. Make sure to save your counter number after voting.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+}
+
+.min-vh-100 {
+    min-height: calc(100vh - 150px);
+}
+</style>
+{% endblock %}

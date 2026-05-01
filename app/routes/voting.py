@@ -12,8 +12,14 @@ bp = Blueprint('voting', __name__)
 
 
 @bp.route('/')
+def landing():
+    """Landing page with options for Voting or Admin"""
+    return render_template('landing.html')
+
+
+@bp.route('/vote')
 def index():
-    """Home page - voter information form"""
+    """Voting page - voter information form"""
     voting_enabled = ConfigSetting.is_voting_enabled()
     wings = Wing.query.filter_by(is_active=True).order_by(Wing.name).all()
 

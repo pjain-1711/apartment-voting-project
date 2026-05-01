@@ -27,7 +27,10 @@
       "Bash(git commit -m \"Add feature summary document\")",
       "Bash(git add PYTHONANYWHERE_SETUP.md)",
       "Bash(git commit -m \"Add detailed PythonAnywhere deployment guide with WSGI configuration:*)",
-      "Bash(git commit -m \"Update HOSTING_GUIDE with link to detailed PythonAnywhere setup:*)"
+      "Bash(git commit -m \"Update HOSTING_GUIDE with link to detailed PythonAnywhere setup:*)",
+      "Bash(git add TROUBLESHOOTING.md)",
+      "Bash(git commit -m \"Add troubleshooting guide for ''Hello from Flask!'' issue:*)",
+      "Bash(python -c \"from app import create_app; app = create_app\\(\\); print\\(''✅ App created successfully with new landing page!''\\)\")"
     ]
   }
 }

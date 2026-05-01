@@ -37,7 +37,7 @@ def logout():
     """Admin logout"""
     logout_user()
     flash('You have been logged out', 'info')
-    return redirect(url_for('voting.index'))
+    return redirect(url_for('voting.landing'))
 
 
 @bp.route('/dashboard')
