@@ -275,7 +275,17 @@ voteForm.addEventListener('submit', function() {
     clearInterval(timerInterval);
     window.removeEventListener('beforeunload', beforeUnloadHandler);
 });
+
+// Start vote selection tour for first-time users
+setTimeout(() => {
+    startVoteSelectionTour();
+}, 1000); // Wait 1 second so timer is visible
 </script>
+
+<!-- Help button to manually trigger tour -->
+<button class="btn btn-info tour-help-btn" onclick="showTourManually('vote_selection')" title="Show Tour">
+    <i class="bi bi-question-circle"></i>
+</button>
 
 <style>
 /* Nominee card selection */

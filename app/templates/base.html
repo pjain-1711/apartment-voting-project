@@ -11,10 +11,84 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
+    <!-- Shepherd.js Tour Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.2.0/dist/css/shepherd.css">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 
     {% block extra_css %}{% endblock %}
+
+    <style>
+        /* Custom Shepherd Tour Styling */
+        .shepherd-theme-custom {
+            max-width: 400px;
+        }
+
+        .shepherd-theme-custom .shepherd-content {
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: inherit;
+        }
+
+        .shepherd-theme-custom .shepherd-text {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .shepherd-theme-custom .shepherd-text h3 {
+            color: #0d6efd;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .shepherd-theme-custom .shepherd-button {
+            background: #0d6efd;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .shepherd-theme-custom .shepherd-button:hover {
+            background: #0b5ed7;
+        }
+
+        .shepherd-theme-custom .shepherd-button-secondary {
+            background: #6c757d;
+        }
+
+        .shepherd-theme-custom .shepherd-button-secondary:hover {
+            background: #5c636a;
+        }
+
+        .shepherd-modal-overlay-container {
+            z-index: 9998;
+        }
+
+        .shepherd-element {
+            z-index: 9999;
+        }
+
+        /* Help button for manual tour trigger */
+        .tour-help-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -96,6 +170,12 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Shepherd.js Tour Library -->
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.2.0/dist/js/shepherd.min.js"></script>
+
+    <!-- Tour System -->
+    <script src="{{ url_for('static', filename='js/tours.js') }}"></script>
 
     {% block extra_js %}{% endblock %}
 </body>

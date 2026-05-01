@@ -69,6 +69,16 @@ document.addEventListener('DOMContentLoaded', function() {
             window.onbeforeunload = null;
         });
     }
+
+    // Start voter info tour for first-time users
+    setTimeout(() => {
+        startVoterInfoTour();
+    }, 500);
 });
 </script>
+
+<!-- Help button to manually trigger tour -->
+<button class="btn btn-info tour-help-btn" onclick="showTourManually('voter_info')" title="Show Tour">
+    <i class="bi bi-question-circle"></i>
+</button>
 {% endblock %}

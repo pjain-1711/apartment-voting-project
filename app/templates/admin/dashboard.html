@@ -236,3 +236,19 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+// Start admin dashboard tour for first-time users
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        startAdminDashboardTour();
+    }, 500);
+});
+</script>
+
+<!-- Help button to manually trigger tour -->
+<button class="btn btn-info tour-help-btn" onclick="showTourManually('admin_dashboard')" title="Show Tour">
+    <i class="bi bi-question-circle"></i>
+</button>
+{% endblock %}
