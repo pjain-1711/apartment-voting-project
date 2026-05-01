@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}{{ archive.election_name }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="mb-4">
+        <a href="{{ url_for('admin_extra.view_archives') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Archives
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="bi bi-archive"></i> {{ archive.election_name }}</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">
+                <i class="bi bi-calendar"></i> Archived: {{ archive.archived_at.strftime('%B %d, %Y at %H:%M') }}
+            </p>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h3>{{ election_data.wings|length }}</h3>
+                    <p class="text-muted">Wings</p>
+                </div>
+                <div class="col-md-3">
+                    <h3>{{ election_data.nominees|length }}</h3>
+                    <p class="text-muted">Nominees</p>
+                </div>
+                <div class="col-md-3">
+                    <h3>{{ election_data.votes|length }}</h3>
+                    <p class="text-muted">Votes Cast</p>
+                </div>
+                <div class="col-md-3">
+                    <h3>{{ election_data.results|length }}</h3>
+                    <p class="text-muted">Results</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Wings</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for wing in election_data.wings %}
+                <div class="col-md-3 mb-2">
+                    <span class="badge bg-primary">{{ wing.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Winners by Wing</h5>
+        </div>
+        <div class="card-body">
+            {% set ns = namespace(wings={}) %}
+            {% for result in election_data.results %}
+                {% if result.is_winner %}
+                    {% set wing_id = result.wing_id %}
+                    {% if wing_id not in ns.wings %}
+                        {% set _ = ns.wings.update({wing_id: {'male': [], 'female': []}}) %}
+                    {% endif %}
+                    {% for nominee in election_data.nominees %}
+                        {% if nominee.id == result.nominee_id %}
+                            {% if result.gender == 'male' %}
+                                {% set _ = ns.wings[wing_id]['male'].append(nominee.name ~ ' (' ~ result.vote_count ~ ' votes)') %}
+                            {% else %}
+                                {% set _ = ns.wings[wing_id]['female'].append(nominee.name ~ ' (' ~ result.vote_count ~ ' votes)') %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+
+            {% for wing in election_data.wings %}
+            <div class="mb-3">
+                <h6><strong>Wing {{ wing.name }}</strong></h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Male Winners:</strong></p>
+                        <ul class="list-unstyled ms-3">
+                            {% if wing.id in ns.wings and ns.wings[wing.id]['male'] %}
+                                {% for winner in ns.wings[wing.id]['male'] %}
+                                <li><i class="bi bi-trophy text-warning"></i> {{ winner }}</li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="text-muted">No winners</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Female Winners:</strong></p>
+                        <ul class="list-unstyled ms-3">
+                            {% if wing.id in ns.wings and ns.wings[wing.id]['female'] %}
+                                {% for winner in ns.wings[wing.id]['female'] %}
+                                <li><i class="bi bi-trophy text-warning"></i> {{ winner }}</li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="text-muted">No winners</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="text-center">
+        <p class="text-muted">This is a historical record of a completed election.</p>
+    </div>
+</div>
+{% endblock %}

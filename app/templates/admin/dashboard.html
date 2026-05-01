@@ -25,6 +25,16 @@
                     <a class="nav-link" href="{{ url_for('admin.settings') }}">
                         <i class="bi bi-gear"></i> Settings
                     </a>
+                    <hr>
+                    <a class="nav-link" href="{{ url_for('admin_extra.change_password') }}">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.view_archives') }}">
+                        <i class="bi bi-archive"></i> Archives
+                    </a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.new_election') }}">
+                        <i class="bi bi-plus-circle"></i> New Election
+                    </a>
                 </nav>
             </div>
         </div>
@@ -114,6 +124,46 @@
                                 <p class="text-muted">Download election results</p>
                                 <a href="{{ url_for('results.export_results') }}" class="btn btn-info" {% if not results_declared %}disabled{% endif %}>
                                     <i class="bi bi-download"></i> Export Results
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Actions -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-archive text-primary" style="font-size: 2rem;"></i>
+                                <h5 class="mt-3">Archive Election</h5>
+                                <p class="text-muted">Save current election data permanently</p>
+                                <a href="{{ url_for('admin_extra.archive_election') }}" class="btn btn-primary">
+                                    <i class="bi bi-archive"></i> Archive
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-plus-circle text-success" style="font-size: 2rem;"></i>
+                                <h5 class="mt-3">New Election</h5>
+                                <p class="text-muted">Start fresh election cycle</p>
+                                <a href="{{ url_for('admin_extra.new_election') }}" class="btn btn-success">
+                                    <i class="bi bi-plus-circle"></i> Start New
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-key text-secondary" style="font-size: 2rem;"></i>
+                                <h5 class="mt-3">Change Password</h5>
+                                <p class="text-muted">Update admin credentials</p>
+                                <a href="{{ url_for('admin_extra.change_password') }}" class="btn btn-secondary">
+                                    <i class="bi bi-key"></i> Change
                                 </a>
                             </div>
                         </div>

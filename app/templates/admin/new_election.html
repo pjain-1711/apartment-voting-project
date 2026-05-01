@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Start New Election{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-3">
+                <h5 class="text-muted mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin.wings') }}"><i class="bi bi-building"></i> Manage Wings</a>
+                    <a class="nav-link" href="{{ url_for('admin.nominees') }}"><i class="bi bi-people"></i> Manage Nominees</a>
+                    <a class="nav-link" href="{{ url_for('admin.progress') }}"><i class="bi bi-graph-up"></i> Voting Progress</a>
+                    <a class="nav-link" href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Settings</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.change_password') }}"><i class="bi bi-key"></i> Change Password</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.view_archives') }}"><i class="bi bi-archive"></i> Archives</a>
+                    <a class="nav-link active" href="{{ url_for('admin_extra.new_election') }}"><i class="bi bi-plus-circle"></i> New Election</a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <h2 class="mb-4"><i class="bi bi-plus-circle"></i> Start New Election</h2>
+
+                <div class="alert alert-danger mb-4">
+                    <i class="bi bi-exclamation-triangle-fill"></i> <strong>Warning!</strong> This action will delete election data. Make sure to archive current election before proceeding if you want to keep the records.
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">Current Election Data</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <h3>{{ total_wings }}</h3>
+                                        <p class="text-muted">Wings</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>{{ total_nominees }}</h3>
+                                        <p class="text-muted">Nominees</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>{{ total_votes }}</h3>
+                                        <p class="text-muted">Votes Cast</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Choose Reset Option</h5>
+                                <form method="POST">
+                                    <div class="mb-4">
+                                        <div class="card mb-3" style="cursor: pointer;" onclick="document.getElementById('keep_nominees').checked = true;">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="reset_option" id="keep_nominees" value="keep_nominees" checked>
+                                                    <label class="form-check-label w-100" for="keep_nominees">
+                                                        <h6 class="mb-1"><i class="bi bi-arrow-clockwise text-info"></i> Keep Nominees & Wings (Recommended)</h6>
+                                                        <p class="text-muted mb-0 small">
+                                                            <strong>Deletes:</strong> All votes and results<br>
+                                                            <strong>Keeps:</strong> Wings, nominees, and their details<br>
+                                                            <strong>Use when:</strong> Running another election with same candidates
+                                                        </p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card mb-3" style="cursor: pointer;" onclick="document.getElementById('keep_wings').checked = true;">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="reset_option" id="keep_wings" value="keep_wings">
+                                                    <label class="form-check-label w-100" for="keep_wings">
+                                                        <h6 class="mb-1"><i class="bi bi-building text-warning"></i> Keep Wings Only</h6>
+                                                        <p class="text-muted mb-0 small">
+                                                            <strong>Deletes:</strong> All votes, results, and nominees<br>
+                                                            <strong>Keeps:</strong> Wing structure<br>
+                                                            <strong>Use when:</strong> New election with different nominees, same wings
+                                                        </p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card" style="cursor: pointer;" onclick="document.getElementById('full_reset').checked = true;">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="reset_option" id="full_reset" value="full_reset">
+                                                    <label class="form-check-label w-100" for="full_reset">
+                                                        <h6 class="mb-1"><i class="bi bi-trash text-danger"></i> Complete Reset</h6>
+                                                        <p class="text-muted mb-0 small">
+                                                            <strong>Deletes:</strong> Everything (votes, results, nominees, wings)<br>
+                                                            <strong>Keeps:</strong> Only admin account and system settings<br>
+                                                            <strong>Use when:</strong> Starting completely fresh
+                                                        </p>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-warning">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="confirm" name="confirm" value="yes" required>
+                                            <label class="form-check-label" for="confirm">
+                                                <strong>I understand that this will delete data and cannot be undone.</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-danger btn-lg">
+                                            <i class="bi bi-exclamation-triangle"></i> Start New Election
+                                        </button>
+                                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-x-circle"></i> Cancel
+                                        </a>
+                                    </div>
+                                </form>
+
+                                <div class="mt-4 text-center">
+                                    <p class="text-muted">
+                                        <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Archive your current election first to keep permanent records.
+                                    </p>
+                                    <a href="{{ url_for('admin_extra.archive_election') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-archive"></i> Go to Archive
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

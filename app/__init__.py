@@ -37,11 +37,12 @@ def create_app(config_name=None):
     login_manager.login_message_category = 'info'
 
     # Register blueprints
-    from app.routes import admin, voting, results
+    from app.routes import admin, voting, results, admin_new_features
 
     app.register_blueprint(admin.bp)
     app.register_blueprint(voting.bp)
     app.register_blueprint(results.bp)
+    app.register_blueprint(admin_new_features.bp)
 
     # Create instance folder if it doesn't exist
     try:

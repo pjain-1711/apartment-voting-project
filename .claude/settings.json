@@ -15,7 +15,9 @@
       "Bash(chmod +x RUN_NOW.sh)",
       "Bash(git add RUN_NOW.sh)",
       "Bash(git commit -m \"Add executable run script\")",
-      "Bash(git commit -m \"Add hosting guide and deployment configs\")"
+      "Bash(git commit -m \"Add hosting guide and deployment configs\")",
+      "Bash(python -c \"from app import create_app; app = create_app\\(\\); print\\(''✅ App created successfully with new features!''\\)\")",
+      "Bash(git add -A)"
     ]
   }
 }

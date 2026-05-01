@@ -166,3 +166,18 @@ class ConfigSetting(db.Model):
 
     def __repr__(self):
         return f'<ConfigSetting {self.key}={self.value}>'
+
+
+class ArchivedElection(db.Model):
+    """Archived election data model"""
+    __tablename__ = 'archived_elections'
+
+    id = db.Column(db.Integer, primary_key=True)
+    election_name = db.Column(db.String(200), nullable=False)
+    election_data = db.Column(db.Text, nullable=False)  # JSON string
+    archived_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    total_votes = db.Column(db.Integer, default=0)
+    total_nominees = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return f'<ArchivedElection {self.election_name}>'

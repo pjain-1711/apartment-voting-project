@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Archive Election{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-3">
+                <h5 class="text-muted mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin.wings') }}"><i class="bi bi-building"></i> Manage Wings</a>
+                    <a class="nav-link" href="{{ url_for('admin.nominees') }}"><i class="bi bi-people"></i> Manage Nominees</a>
+                    <a class="nav-link" href="{{ url_for('admin.progress') }}"><i class="bi bi-graph-up"></i> Voting Progress</a>
+                    <a class="nav-link" href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Settings</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.change_password') }}"><i class="bi bi-key"></i> Change Password</a>
+                    <a class="nav-link active" href="{{ url_for('admin_extra.view_archives') }}"><i class="bi bi-archive"></i> Archives</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.new_election') }}"><i class="bi bi-plus-circle"></i> New Election</a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <h2 class="mb-4"><i class="bi bi-archive"></i> Archive Current Election</h2>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">Current Election Data</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <h3>{{ total_wings }}</h3>
+                                        <p class="text-muted">Wings</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>{{ total_nominees }}</h3>
+                                        <p class="text-muted">Nominees</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>{{ total_votes }}</h3>
+                                        <p class="text-muted">Votes Cast</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if total_votes > 0 %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Archive Information</h5>
+                                <p class="text-muted">Archiving will save all current election data including wings, nominees, votes, and results. This allows you to keep a permanent record before starting a new election.</p>
+
+                                <form method="POST" onsubmit="return confirm('Archive current election data? This will save all information permanently.');">
+                                    <div class="mb-3">
+                                        <label for="election_name" class="form-label">Election Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="election_name" name="election_name" placeholder="e.g., 2026 Wing Representatives Election" required>
+                                        <small class="text-muted">Give this election a memorable name for future reference</small>
+                                    </div>
+
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> <strong>Note:</strong> Archiving does NOT delete current data. Use "New Election" to clear data after archiving.
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <i class="bi bi-archive"></i> Archive Election
+                                        </button>
+                                        <a href="{{ url_for('admin_extra.view_archives') }}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left"></i> View Existing Archives
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> <strong>No Data to Archive</strong>
+                            <p class="mb-0">There are no votes cast yet. Complete an election before archiving.</p>
+                        </div>
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
