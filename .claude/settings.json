@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PROJECT_SUMMARY.txt:*)",
+      "Bash(git add PROJECT_SUMMARY.txt)",
+      "Bash(git commit -m \"Add project summary and completion status:*)",
+      "Bash(git add DEPLOYMENT_CHECKLIST.md)",
+      "Bash(git commit -m \"Add comprehensive deployment checklist:*)",
+      "Bash(git add HOW_TO_RUN.md)",
+      "Bash(git commit -m \"Add comprehensive how-to-run guide:*)",
+      "Bash(git add START_HERE.md)",
+      "Bash(git commit -m \"Add quick-start reference card:*)",
+      "Bash(ls -1 *.md *.txt)",
+      "Bash(RUN_NOW.sh:*)",
+      "Bash(chmod +x RUN_NOW.sh)",
+      "Bash(git add RUN_NOW.sh)",
+      "Bash(git commit -m \"Add executable run script\")",
+      "Bash(git commit -m \"Add hosting guide and deployment configs\")"
+    ]
+  }
+}
