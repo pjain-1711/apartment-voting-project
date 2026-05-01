@@ -19,23 +19,25 @@ def extract_wing_from_flat(flat_number):
     if wing_number == 0:
         return None, "Flat number cannot start with 0"
 
-    # Map wing number to wing name (1=A, 2=B, 3=C, etc.)
-    wing_map = {
-        1: 'A', 2: 'B', 3: 'C', 4: 'D',
-        5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I'
-    }
+    # Try to find wing by first digit directly (for wings named "1", "2", "3", etc.)
+    wing_number_str = str(wing_number)
+    wing = Wing.query.filter_by(name=wing_number_str).first()
 
-    wing_name = wing_map.get(wing_number)
-    if not wing_name:
-        return None, f"Invalid wing number: {wing_number}"
-
-    # Find wing in database
-    wing = Wing.query.filter_by(name=wing_name).first()
+    # If not found, try letter mapping (1=A, 2=B, etc.)
     if not wing:
-        return None, f"Wing {wing_name} does not exist in the system"
+        wing_map = {
+            1: 'A', 2: 'B', 3: 'C', 4: 'D',
+            5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I'
+        }
+        wing_name = wing_map.get(wing_number)
+        if wing_name:
+            wing = Wing.query.filter_by(name=wing_name).first()
+
+    if not wing:
+        return None, f"Wing for flat starting with {wing_number} does not exist in the system"
 
     if not wing.is_active:
-        return None, f"Wing {wing_name} is not active"
+        return None, f"Wing {wing.name} is not active"
 
     return wing.id, None
 
