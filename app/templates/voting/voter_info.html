@@ -25,7 +25,7 @@
                         Please enter your details to proceed to voting. Each flat can vote for <strong>one male and one female representative</strong> from your wing.
                     </div>
 
-                    <form method="POST" action="{{ url_for('voting.vote') }}">
+                    <form method="POST" action="{{ url_for('voting.vote') }}" id="voterForm">
                         <div class="mb-3">
                             <label for="voter_name" class="form-label">Your Name</label>
                             <input type="text" class="form-control" id="voter_name" name="voter_name" required>
@@ -55,4 +55,20 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Disable "unsaved changes" warning when form is submitted
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('voterForm');
+    if (form) {
+        // Remove any beforeunload listeners when form is submitted
+        form.addEventListener('submit', function() {
+            // Remove all beforeunload event listeners
+            window.onbeforeunload = null;
+        });
+    }
+});
+</script>
 {% endblock %}
