@@ -34,7 +34,13 @@
       "Bash(git commit -m \"Add separate endpoints: landing page, voting, and admin:*)",
       "Bash(git add ENDPOINTS.md)",
       "Bash(git commit -m \"Add endpoints documentation\")",
-      "Bash(python -c \"from app import create_app; app = create_app\\(\\); print\\(''✅ App with timer feature works!''\\)\")"
+      "Bash(python -c \"from app import create_app; app = create_app\\(\\); print\\(''✅ App with timer feature works!''\\)\")",
+      "Bash(git commit -m \"Add 2-minute voting timer with 10-second warning:*)",
+      "Bash(git add TIMER_FEATURE.md)",
+      "Bash(git commit -m \"Add comprehensive timer feature documentation\")",
+      "Bash(/tmp/comprehensive_changes.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(git commit -m \"Remove public access to results - admin only:*)"
     ]
   }
 }
