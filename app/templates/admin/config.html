@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-3">
+                <h5 class="text-muted mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin.wings') }}"><i class="bi bi-building"></i> Manage Wings</a>
+                    <a class="nav-link" href="{{ url_for('admin.nominees') }}"><i class="bi bi-people"></i> Manage Nominees</a>
+                    <a class="nav-link" href="{{ url_for('admin.progress') }}"><i class="bi bi-graph-up"></i> Voting Progress</a>
+                    <a class="nav-link active" href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Settings</a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <h2 class="mb-4">System Settings</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="voting_enabled" name="voting_enabled" {% if settings.voting_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="voting_enabled">
+                                        <strong>Enable Voting</strong>
+                                        <p class="text-muted small mb-0">Allow voters to cast their votes</p>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="results_visible" name="results_visible" {% if settings.results_visible %}checked{% endif %}>
+                                    <label class="form-check-label" for="results_visible">
+                                        <strong>Show Results</strong>
+                                        <p class="text-muted small mb-0">Make election results visible to public</p>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="winners_per_gender" class="form-label"><strong>Winners Per Gender</strong></label>
+                                <input type="number" class="form-control" style="max-width: 200px;" id="winners_per_gender" name="winners_per_gender" value="{{ settings.winners_per_gender }}" min="1" max="10" required>
+                                <small class="text-muted">Number of winners to be declared for each gender per wing</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

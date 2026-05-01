@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Assetz Sun and Sanctum{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-shield-lock text-primary" style="font-size: 3rem;"></i>
+                        <h2 class="mt-3">Admin Login</h2>
+                        <p class="text-muted">Assetz Sun and Sanctum Voting System</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('admin.login') }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('voting.index') }}" class="text-decoration-none">
+                            <i class="bi bi-arrow-left"></i> Back to Voting
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

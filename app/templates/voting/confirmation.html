@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Confirm Your Vote{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow fade-in-up">
+                <div class="card-header bg-warning">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirm Your Vote</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Please review your selections carefully. Once submitted, your vote cannot be changed.
+                    </div>
+                    <h5>Voter Information:</h5>
+                    <ul class="list-unstyled mb-4">
+                        <li><strong>Name:</strong> {{ voter_info.name }}</li>
+                        <li><strong>Flat:</strong> {{ voter_info.flat_number }}</li>
+                    </ul>
+                    <h5>Your Selections:</h5>
+                    <div class="row g-3 mb-4">
+                        {% if male_nominee %}
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-body">
+                                    <h6 class="text-primary"><i class="bi bi-person"></i> Male Representative</h6>
+                                    <p class="mb-0"><strong>{{ male_nominee.name }}</strong></p>
+                                    <small class="text-muted">Flat {{ male_nominee.flat_number }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if female_nominee %}
+                        <div class="col-md-6">
+                            <div class="card border-danger">
+                                <div class="card-body">
+                                    <h6 class="text-danger"><i class="bi bi-person"></i> Female Representative</h6>
+                                    <p class="mb-0"><strong>{{ female_nominee.name }}</strong></p>
+                                    <small class="text-muted">Flat {{ female_nominee.flat_number }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="{{ url_for('voting.submit') }}">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle-fill"></i> Submit Vote
+                            </button>
+                            <a href="{{ url_for('voting.index') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

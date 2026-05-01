@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Already Voted{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow text-center">
+                <div class="card-body p-5">
+                    <div class="text-warning mb-4">
+                        <i class="bi bi-exclamation-triangle-fill" style="font-size: 5rem;"></i>
+                    </div>
+                    <h2 class="text-warning mb-3">Vote Already Cast</h2>
+                    <p class="lead">Flat <strong>{{ flat_number }}</strong> in Wing <strong>{{ wing_name }}</strong> has already voted.</p>
+                    <div class="alert alert-warning mt-4">
+                        <i class="bi bi-info-circle"></i> Each flat can vote only once. If you believe this is an error, please contact the admin.
+                    </div>
+                    <a href="{{ url_for('voting.index') }}" class="btn btn-primary mt-3">
+                        <i class="bi bi-house-door"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

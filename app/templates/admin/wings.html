@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Manage Wings{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-3">
+                <h5 class="text-muted mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link active" href="{{ url_for('admin.wings') }}"><i class="bi bi-building"></i> Manage Wings</a>
+                    <a class="nav-link" href="{{ url_for('admin.nominees') }}"><i class="bi bi-people"></i> Manage Nominees</a>
+                    <a class="nav-link" href="{{ url_for('admin.progress') }}"><i class="bi bi-graph-up"></i> Voting Progress</a>
+                    <a class="nav-link" href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Settings</a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Manage Wings</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWingModal">
+                        <i class="bi bi-plus-circle"></i> Add Wing
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Wing Name</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for wing in wings %}
+                                <tr>
+                                    <td><strong>{{ wing.name }}</strong></td>
+                                    <td><span class="badge bg-{{ 'success' if wing.is_active else 'secondary' }}">{{ 'Active' if wing.is_active else 'Inactive' }}</span></td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('admin.delete_wing', wing_id=wing.id) }}" style="display:inline;" onsubmit="return confirm('Delete wing {{ wing.name }}?');">
+                                            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">No wings added yet</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addWingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('admin.add_wing') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Wing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="wing_name" class="form-label">Wing Name</label>
+                        <input type="text" class="form-control" id="wing_name" name="wing_name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Wing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

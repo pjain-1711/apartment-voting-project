@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Voting Progress{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-3">
+                <h5 class="text-muted mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin.wings') }}"><i class="bi bi-building"></i> Manage Wings</a>
+                    <a class="nav-link" href="{{ url_for('admin.nominees') }}"><i class="bi bi-people"></i> Manage Nominees</a>
+                    <a class="nav-link active" href="{{ url_for('admin.progress') }}"><i class="bi bi-graph-up"></i> Voting Progress</a>
+                    <a class="nav-link" href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Settings</a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <h2 class="mb-4">Voting Progress</h2>
+                <div class="row g-3">
+                    {% for item in wing_progress %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Wing {{ item.wing.name }}</h5>
+                                <p class="mb-2"><strong>Male Nominees:</strong> {{ item.male_nominees }}</p>
+                                <p class="mb-2"><strong>Female Nominees:</strong> {{ item.female_nominees }}</p>
+                                <p class="mb-0"><strong>Votes Cast:</strong> <span class="badge bg-primary">{{ item.votes_cast }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

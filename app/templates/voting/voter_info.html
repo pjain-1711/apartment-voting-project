@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Vote Now - Assetz Sun and Sanctum{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h2>Wing Representative Elections</h2>
+                        <p class="lead text-muted">Assetz Sun and Sanctum</p>
+                    </div>
+
+                    {% if not voting_enabled %}
+                    <div class="alert alert-warning text-center">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Voting is currently closed</strong>
+                        <p class="mb-0">Please check back later or contact the admin.</p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Please enter your details to proceed to voting. Each flat can vote for <strong>one male and one female representative</strong> from your wing.
+                    </div>
+
+                    <form method="POST" action="{{ url_for('voting.vote') }}">
+                        <div class="mb-3">
+                            <label for="voter_name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="voter_name" name="voter_name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="flat_number" class="form-label">Flat Number</label>
+                            <input type="text" class="form-control" id="flat_number" name="flat_number" placeholder="e.g., 101, A-202" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="wing_id" class="form-label">Wing</label>
+                            <select class="form-select" id="wing_id" name="wing_id" required>
+                                <option value="">Select your wing</option>
+                                {% for wing in wings %}
+                                <option value="{{ wing.id }}">{{ wing.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="10-digit number" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Proceed to Vote
+                            </button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

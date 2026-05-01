@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Cast Your Vote - Assetz Sun and Sanctum{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-check"></i> Cast Your Vote</h4>
+                    <p class="mb-0 small">{{ voter_name }} | Wing: {{ wing_name }}</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('voting.confirm') }}" id="voteForm">
+                        <!-- Male Nominees Section -->
+                        <div class="mb-5">
+                            <h5 class="mb-3"><i class="bi bi-person text-primary"></i> Male Representatives</h5>
+                            {% if male_nominees %}
+                            <div class="row g-3">
+                                {% for nominee in male_nominees %}
+                                <div class="col-md-6">
+                                    <div class="nominee-card card h-100" onclick="selectNominee('male', {{ nominee.id }})">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="male_nominee_id" value="{{ nominee.id }}" id="male_{{ nominee.id }}">
+                                                <label class="form-check-label w-100" for="male_{{ nominee.id }}">
+                                                    <h6 class="mb-1">{{ nominee.name }}</h6>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-house-door"></i> Flat {{ nominee.flat_number }}
+                                                        <span class="ms-2"><i class="bi bi-telephone"></i> {{ nominee.phone_number }}</span>
+                                                    </small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i> No male nominees available for your wing.
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Female Nominees Section -->
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="bi bi-person text-danger"></i> Female Representatives</h5>
+                            {% if female_nominees %}
+                            <div class="row g-3">
+                                {% for nominee in female_nominees %}
+                                <div class="col-md-6">
+                                    <div class="nominee-card card h-100" onclick="selectNominee('female', {{ nominee.id }})">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="female_nominee_id" value="{{ nominee.id }}" id="female_{{ nominee.id }}">
+                                                <label class="form-check-label w-100" for="female_{{ nominee.id }}">
+                                                    <h6 class="mb-1">{{ nominee.name }}</h6>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-house-door"></i> Flat {{ nominee.flat_number }}
+                                                        <span class="ms-2"><i class="bi bi-telephone"></i> {{ nominee.phone_number }}</span>
+                                                    </small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i> No female nominees available for your wing.
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-arrow-right-circle"></i> Review & Confirm
+                            </button>
+                            <a href="{{ url_for('voting.index') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectNominee(gender, nomineeId) {
+    const radio = document.getElementById(gender + '_' + nomineeId);
+    radio.checked = true;
+
+    // Update visual selection
+    document.querySelectorAll('.nominee-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    radio.closest('.nominee-card').classList.add('selected');
+}
+
+// Add visual feedback when radio button is selected
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.nominee-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        this.closest('.nominee-card').classList.add('selected');
+    });
+});
+</script>
+{% endblock %}
