@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Upload Nominees{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 admin-sidebar">
+            <div class="p-3">
+                <h5 class="text-muted mb-3">Admin Panel</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('admin.wings') }}"><i class="bi bi-building"></i> Manage Wings</a>
+                    <a class="nav-link active" href="{{ url_for('admin.nominees') }}"><i class="bi bi-people"></i> Manage Nominees</a>
+                    <a class="nav-link" href="{{ url_for('admin.progress') }}"><i class="bi bi-graph-up"></i> Voting Progress</a>
+                    <a class="nav-link" href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Settings</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.change_password') }}"><i class="bi bi-key"></i> Change Password</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.view_archives') }}"><i class="bi bi-archive"></i> Archives</a>
+                    <a class="nav-link" href="{{ url_for('admin_extra.new_election') }}"><i class="bi bi-plus-circle"></i> New Election</a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="bi bi-upload"></i> Upload Nominees from Excel</h2>
+                    <a href="{{ url_for('admin.nominees') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Nominees
+                    </a>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Upload Excel File</h5>
+
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="mb-4">
+                                        <label for="file" class="form-label">Select Excel File</label>
+                                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx,.xls" required>
+                                        <small class="form-text text-muted">
+                                            Accepted formats: .xlsx, .xls
+                                        </small>
+                                    </div>
+
+                                    <div class="alert alert-info">
+                                        <h6><i class="bi bi-info-circle"></i> Required Columns:</h6>
+                                        <ul class="mb-0">
+                                            <li><strong>Name</strong> - Nominee's full name</li>
+                                            <li><strong>Apartment number</strong> - Flat/apartment number</li>
+                                            <li><strong>Wing</strong> - Wing name (A, B, C, etc.)</li>
+                                            <li><strong>Gender</strong> - "male" or "female"</li>
+                                            <li><strong>Active status</strong> - Any value except "withdrawn"</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="alert alert-warning">
+                                        <h6><i class="bi bi-exclamation-triangle"></i> Important Notes:</h6>
+                                        <ul class="mb-0">
+                                            <li>Nominees with Active status = "withdrawn" will be skipped</li>
+                                            <li>Duplicate nominees (same name + flat + wing) will be skipped</li>
+                                            <li>Wing must already exist in the system</li>
+                                            <li>Gender must be exactly "male" or "female" (case insensitive)</li>
+                                        </ul>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-upload"></i> Upload and Import
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Excel Format Example</h5>
+                                <p class="text-muted">Your Excel file should look like this:</p>
+
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr class="table-primary">
+                                                <th>Name</th>
+                                                <th>Apartment number</th>
+                                                <th>Wing</th>
+                                                <th>Gender</th>
+                                                <th>Active status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>John Doe</td>
+                                                <td>1001</td>
+                                                <td>A</td>
+                                                <td>male</td>
+                                                <td>active</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Jane Smith</td>
+                                                <td>2305</td>
+                                                <td>B</td>
+                                                <td>female</td>
+                                                <td>active</td>
+                                            </tr>
+                                            <tr class="table-secondary">
+                                                <td>Bob Wilson</td>
+                                                <td>1205</td>
+                                                <td>A</td>
+                                                <td>male</td>
+                                                <td>withdrawn</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i> Rows with gray background will be skipped
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h6 class="card-title">Tips:</h6>
+                                <ul class="small mb-0">
+                                    <li>Optional columns (Timestamp, Email) will be ignored</li>
+                                    <li>Phone numbers are not collected from Excel</li>
+                                    <li>Make sure wings exist before uploading</li>
+                                    <li>Check for errors after upload</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

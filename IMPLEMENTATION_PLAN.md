@@ -1,6 +1,17 @@
 # Implementation Plan for Requested Changes
 
-## Status: 1/7 Complete
+## Status: 5/7 Complete
+
+**Completed:**
+1. ✅ Remove view results from home page
+2. ✅ Auto-select nominees when not enough candidates
+3. ✅ Download archived reports
+4. ✅ Limit archives to 12
+5. ✅ Remove phone number from voting form
+6. ✅ Auto-deduce wing from flat number
+
+**Remaining:**
+7. ⏳ Excel upload for nominees
 
 ---
 

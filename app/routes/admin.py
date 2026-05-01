@@ -211,6 +211,57 @@ def delete_nominee(nominee_id):
     return redirect(url_for('admin.nominees'))
 
 
+@bp.route('/nominees/upload', methods=['GET', 'POST'])
+@login_required
+def upload_nominees():
+    """Upload nominees from Excel file"""
+    if request.method == 'POST':
+        # Check if file was uploaded
+        if 'file' not in request.files:
+            flash('No file uploaded', 'error')
+            return redirect(url_for('admin.upload_nominees'))
+
+        file = request.files['file']
+
+        if file.filename == '':
+            flash('No file selected', 'error')
+            return redirect(url_for('admin.upload_nominees'))
+
+        # Validate file extension
+        if not file.filename.endswith(('.xlsx', '.xls')):
+            flash('Please upload an Excel file (.xlsx or .xls)', 'error')
+            return redirect(url_for('admin.upload_nominees'))
+
+        # Process file
+        from app.utils.excel_import import import_nominees_from_excel
+
+        try:
+            success_count, error_count, errors = import_nominees_from_excel(file)
+
+            # Show results
+            if success_count > 0:
+                flash(f'Successfully imported {success_count} nominee(s)', 'success')
+
+            if error_count > 0:
+                flash(f'{error_count} error(s) occurred during import', 'warning')
+
+                # Show first 5 errors
+                for error in errors[:5]:
+                    flash(error, 'error')
+
+                if len(errors) > 5:
+                    flash(f'... and {len(errors) - 5} more error(s)', 'error')
+
+            return redirect(url_for('admin.nominees'))
+
+        except Exception as e:
+            flash(f'Error processing file: {str(e)}', 'error')
+            return redirect(url_for('admin.upload_nominees'))
+
+    # GET request - show upload form
+    return render_template('admin/upload_nominees.html')
+
+
 @bp.route('/progress')
 @login_required
 def progress():
