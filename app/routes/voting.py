@@ -5,7 +5,8 @@ from app.utils.validators import (
     has_already_voted,
     get_nominees_by_wing_and_gender,
     get_next_counter_number,
-    validate_vote_selection
+    validate_vote_selection,
+    extract_wing_from_flat
 )
 
 bp = Blueprint('voting', __name__)
@@ -21,11 +22,9 @@ def landing():
 def index():
     """Voting page - voter information form"""
     voting_enabled = ConfigSetting.is_voting_enabled()
-    wings = Wing.query.filter_by(is_active=True).order_by(Wing.name).all()
 
     return render_template('voting/voter_info.html',
-                           voting_enabled=voting_enabled,
-                           wings=wings)
+                           voting_enabled=voting_enabled)
 
 
 @bp.route('/vote', methods=['POST'])
@@ -40,19 +39,20 @@ def vote():
     # Get voter information
     voter_name = request.form.get('voter_name', '').strip()
     flat_number = request.form.get('flat_number', '').strip()
-    wing_id = request.form.get('wing_id', type=int)
-    phone_number = request.form.get('phone_number', '').strip()
 
     # Validation
-    if not all([voter_name, flat_number, wing_id, phone_number]):
+    if not all([voter_name, flat_number]):
         flash('All fields are required', 'error')
         return redirect(url_for('voting.index'))
 
-    # Check if wing exists
-    wing = Wing.query.get(wing_id)
-    if not wing or not wing.is_active:
-        flash('Invalid wing selected', 'error')
+    # Extract wing from flat number
+    wing_id, error = extract_wing_from_flat(flat_number)
+    if error:
+        flash(error, 'error')
         return redirect(url_for('voting.index'))
+
+    # Check if wing exists (already validated in extract_wing_from_flat)
+    wing = Wing.query.get(wing_id)
 
     # Check if flat has already voted
     if has_already_voted(flat_number, wing_id):
@@ -73,8 +73,7 @@ def vote():
     session['voter_info'] = {
         'name': voter_name,
         'flat_number': flat_number,
-        'wing_id': wing_id,
-        'phone_number': phone_number
+        'wing_id': wing_id
     }
     session['timer_start'] = datetime.utcnow().timestamp()
 
@@ -171,7 +170,7 @@ def submit():
             name=voter_info['name'],
             flat_number=voter_info['flat_number'],
             wing_id=voter_info['wing_id'],
-            phone_number=voter_info['phone_number'],
+            phone_number='',  # No longer collected
             counter_number=counter_number
         )
         db.session.add(voter)

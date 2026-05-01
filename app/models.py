@@ -76,7 +76,7 @@ class Voter(db.Model):
     name = db.Column(db.String(100), nullable=False)
     flat_number = db.Column(db.String(20), nullable=False)
     wing_id = db.Column(db.Integer, db.ForeignKey('wings.id'), nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=True)  # Optional field
     counter_number = db.Column(db.Integer, unique=True, nullable=False)
     voted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 

@@ -33,22 +33,14 @@
 
                         <div class="mb-3">
                             <label for="flat_number" class="form-label">Flat Number</label>
-                            <input type="text" class="form-control" id="flat_number" name="flat_number" placeholder="e.g., 101, A-202" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="wing_id" class="form-label">Wing</label>
-                            <select class="form-select" id="wing_id" name="wing_id" required>
-                                <option value="">Select your wing</option>
-                                {% for wing in wings %}
-                                <option value="{{ wing.id }}">{{ wing.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="phone_number" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="10-digit number" required>
+                            <input type="text" class="form-control" id="flat_number" name="flat_number"
+                                   pattern="[0-9]{4}"
+                                   placeholder="e.g., 1001, 2305, 3207"
+                                   title="Flat number must be exactly 4 digits"
+                                   required>
+                            <small class="form-text text-muted">
+                                Enter 4-digit flat number. First digit indicates wing (1=A, 2=B, 3=C, etc.)
+                            </small>
                         </div>
 
                         <div class="d-grid gap-2">

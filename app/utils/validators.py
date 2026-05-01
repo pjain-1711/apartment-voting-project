@@ -1,4 +1,43 @@
-from app.models import Voter, Nominee
+from app.models import Voter, Nominee, Wing
+
+
+def extract_wing_from_flat(flat_number):
+    """
+    Extract wing from flat number (first digit indicates wing)
+    Returns: (wing_id, error_message)
+    """
+    # Validate flat number format
+    if not flat_number or len(flat_number) != 4:
+        return None, "Flat number must be exactly 4 digits"
+
+    if not flat_number.isdigit():
+        return None, "Flat number must contain only digits"
+
+    # Get first digit (wing number)
+    wing_number = int(flat_number[0])
+
+    if wing_number == 0:
+        return None, "Flat number cannot start with 0"
+
+    # Map wing number to wing name (1=A, 2=B, 3=C, etc.)
+    wing_map = {
+        1: 'A', 2: 'B', 3: 'C', 4: 'D',
+        5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I'
+    }
+
+    wing_name = wing_map.get(wing_number)
+    if not wing_name:
+        return None, f"Invalid wing number: {wing_number}"
+
+    # Find wing in database
+    wing = Wing.query.filter_by(name=wing_name).first()
+    if not wing:
+        return None, f"Wing {wing_name} does not exist in the system"
+
+    if not wing.is_active:
+        return None, f"Wing {wing_name} is not active"
+
+    return wing.id, None
 
 
 def has_already_voted(flat_number, wing_id):
