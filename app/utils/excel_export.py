@@ -2,6 +2,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
 from app.models import Voter, Vote, Wing
 from datetime import datetime
+import json
 
 
 def create_anonymous_export():
@@ -155,5 +156,120 @@ def create_results_export():
     sheet.column_dimensions['E'].width = 12
     sheet.column_dimensions['F'].width = 8
     sheet.column_dimensions['G'].width = 12
+
+    return workbook
+
+
+def create_archive_export(archive):
+    """Create Excel export from archived election data"""
+    # Parse JSON data
+    election_data = json.loads(archive.election_data)
+
+    workbook = Workbook()
+
+    # Header styling
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    header_font = Font(color="FFFFFF", bold=True)
+    winner_fill = PatternFill(start_color="90EE90", end_color="90EE90", fill_type="solid")
+
+    # ===== Sheet 1: Results =====
+    results_sheet = workbook.active
+    results_sheet.title = "Results"
+
+    # Headers for results
+    headers = ['Wing', 'Gender', 'Nominee Name', 'Flat #', 'Vote Count', 'Rank', 'Status']
+    for col_num, header in enumerate(headers, 1):
+        cell = results_sheet.cell(row=1, column=col_num)
+        cell.value = header
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+
+    # Populate results data
+    row_num = 2
+    for result in election_data.get('results', []):
+        results_sheet.cell(row=row_num, column=1).value = result['wing_name']
+        results_sheet.cell(row=row_num, column=2).value = result['gender'].capitalize()
+        results_sheet.cell(row=row_num, column=3).value = result['nominee_name']
+        results_sheet.cell(row=row_num, column=4).value = result['nominee_flat']
+        results_sheet.cell(row=row_num, column=5).value = result['vote_count']
+        results_sheet.cell(row=row_num, column=6).value = result['rank']
+
+        status_cell = results_sheet.cell(row=row_num, column=7)
+        status_cell.value = "WINNER" if result['is_winner'] else "Candidate"
+
+        if result['is_winner']:
+            for col in range(1, 8):
+                results_sheet.cell(row=row_num, column=col).fill = winner_fill
+
+        row_num += 1
+
+    # Adjust column widths
+    results_sheet.column_dimensions['A'].width = 10
+    results_sheet.column_dimensions['B'].width = 10
+    results_sheet.column_dimensions['C'].width = 25
+    results_sheet.column_dimensions['D'].width = 10
+    results_sheet.column_dimensions['E'].width = 12
+    results_sheet.column_dimensions['F'].width = 8
+    results_sheet.column_dimensions['G'].width = 12
+
+    # ===== Sheet 2: Detailed Votes =====
+    votes_sheet = workbook.create_sheet(title="Detailed Votes")
+
+    # Headers for votes
+    vote_headers = ['Counter #', 'Flat #', 'Wing', 'Voter Name', 'Phone', 'Male Vote', 'Female Vote', 'Timestamp']
+    for col_num, header in enumerate(vote_headers, 1):
+        cell = votes_sheet.cell(row=1, column=col_num)
+        cell.value = header
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+
+    # Populate votes data
+    row_num = 2
+    for vote in election_data.get('votes', []):
+        votes_sheet.cell(row=row_num, column=1).value = vote['counter_number']
+        votes_sheet.cell(row=row_num, column=2).value = vote['flat_number']
+        votes_sheet.cell(row=row_num, column=3).value = vote['wing_name']
+        votes_sheet.cell(row=row_num, column=4).value = vote['voter_name']
+        votes_sheet.cell(row=row_num, column=5).value = vote.get('phone_number', '')
+        votes_sheet.cell(row=row_num, column=6).value = vote.get('male_vote', 'N/A')
+        votes_sheet.cell(row=row_num, column=7).value = vote.get('female_vote', 'N/A')
+        votes_sheet.cell(row=row_num, column=8).value = vote['voted_at']
+
+        row_num += 1
+
+    # Adjust column widths
+    votes_sheet.column_dimensions['A'].width = 12
+    votes_sheet.column_dimensions['B'].width = 10
+    votes_sheet.column_dimensions['C'].width = 10
+    votes_sheet.column_dimensions['D'].width = 20
+    votes_sheet.column_dimensions['E'].width = 15
+    votes_sheet.column_dimensions['F'].width = 25
+    votes_sheet.column_dimensions['G'].width = 25
+    votes_sheet.column_dimensions['H'].width = 20
+
+    # ===== Sheet 3: Summary =====
+    summary_sheet = workbook.create_sheet(title="Summary")
+
+    # Election info
+    summary_sheet['A1'] = "Election Name:"
+    summary_sheet['B1'] = archive.election_name
+    summary_sheet['A1'].font = Font(bold=True)
+
+    summary_sheet['A2'] = "Archived Date:"
+    summary_sheet['B2'] = archive.archived_at.strftime('%Y-%m-%d %H:%M:%S')
+    summary_sheet['A2'].font = Font(bold=True)
+
+    summary_sheet['A3'] = "Total Votes:"
+    summary_sheet['B3'] = archive.total_votes
+    summary_sheet['A3'].font = Font(bold=True)
+
+    summary_sheet['A4'] = "Total Nominees:"
+    summary_sheet['B4'] = archive.total_nominees
+    summary_sheet['A4'].font = Font(bold=True)
+
+    summary_sheet.column_dimensions['A'].width = 20
+    summary_sheet.column_dimensions['B'].width = 40
 
     return workbook

@@ -65,6 +65,14 @@ def archive_election():
             flash('No voting data to archive', 'error')
             return redirect(url_for('admin_extra.archive_election'))
 
+        # Limit to 12 archives - delete oldest if at limit
+        archive_count = ArchivedElection.query.count()
+        if archive_count >= 12:
+            oldest = ArchivedElection.query.order_by(ArchivedElection.archived_at.asc()).first()
+            if oldest:
+                db.session.delete(oldest)
+                flash(f'Oldest archive "{oldest.election_name}" was automatically deleted (limit: 12)', 'warning')
+
         # Collect all election data
         election_data = {
             'election_name': election_name,
@@ -94,22 +102,40 @@ def archive_election():
                 'wing_id': nominee.wing_id
             })
 
-        # Collect votes (anonymized for storage)
+        # Collect votes with detailed information for export
         for voter in Voter.query.all():
             voter_votes = Vote.query.filter_by(voter_id=voter.id).all()
+
+            # Get male and female votes
+            male_vote = None
+            female_vote = None
+            for vote in voter_votes:
+                if vote.nominee.gender == 'male':
+                    male_vote = vote.nominee.name
+                elif vote.nominee.gender == 'female':
+                    female_vote = vote.nominee.name
+
             election_data['votes'].append({
                 'counter_number': voter.counter_number,
                 'flat_number': voter.flat_number,
                 'wing_id': voter.wing_id,
-                'voted_at': voter.voted_at.isoformat(),
+                'wing_name': voter.wing.name,
+                'voter_name': voter.name,
+                'phone_number': voter.phone_number or '',
+                'voted_at': voter.voted_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'male_vote': male_vote,
+                'female_vote': female_vote,
                 'nominees_voted': [vote.nominee_id for vote in voter_votes]
             })
 
-        # Collect results
+        # Collect results with detailed information for export
         for result in Result.query.all():
             election_data['results'].append({
                 'wing_id': result.wing_id,
+                'wing_name': result.wing.name,
                 'nominee_id': result.nominee_id,
+                'nominee_name': result.nominee.name,
+                'nominee_flat': result.nominee.flat_number,
                 'gender': result.gender,
                 'vote_count': result.vote_count,
                 'rank': result.rank,
@@ -159,6 +185,36 @@ def view_archive_detail(archive_id):
     return render_template('admin/archive_detail.html',
                            archive=archive,
                            election_data=election_data)
+
+
+@bp.route('/archives/<int:archive_id>/download')
+@login_required
+def download_archive(archive_id):
+    """Download archived election as Excel file"""
+    from flask import send_file
+    from app.utils.excel_export import create_archive_export
+    from io import BytesIO
+
+    archive = ArchivedElection.query.get_or_404(archive_id)
+
+    # Create Excel workbook
+    workbook = create_archive_export(archive)
+
+    # Save to BytesIO
+    output = BytesIO()
+    workbook.save(output)
+    output.seek(0)
+
+    # Create safe filename
+    safe_name = archive.election_name.replace(' ', '_').replace('/', '-')
+    filename = f'archive_{safe_name}_{archive.archived_at.strftime("%Y%m%d")}.xlsx'
+
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name=filename
+    )
 
 
 @bp.route('/archives/<int:archive_id>/delete', methods=['POST'])

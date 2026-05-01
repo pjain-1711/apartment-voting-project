@@ -50,6 +50,9 @@
                                         <a href="{{ url_for('admin_extra.view_archive_detail', archive_id=archive.id) }}" class="btn btn-sm btn-primary me-2">
                                             <i class="bi bi-eye"></i> View
                                         </a>
+                                        <a href="{{ url_for('admin_extra.download_archive', archive_id=archive.id) }}" class="btn btn-sm btn-success me-2">
+                                            <i class="bi bi-download"></i> Download
+                                        </a>
                                         <form method="POST" action="{{ url_for('admin_extra.delete_archive', archive_id=archive.id) }}" style="display:inline;" onsubmit="return confirm('Delete this archived election? This cannot be undone!');">
                                             <button type="submit" class="btn btn-sm btn-danger">
                                                 <i class="bi bi-trash"></i> Delete
