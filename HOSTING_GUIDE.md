@@ -134,11 +134,20 @@
 
 4. **Configure Web App:**
    - "Web" tab → "Add new web app"
-   - Select "Flask"
-   - Point to `/home/yourusername/voting-system/run.py`
+   - Select "Manual configuration" → Python 3.10
+   - Configure WSGI file (see detailed guide below)
    - Set virtualenv: `/home/yourusername/.virtualenvs/voting`
 
-5. **Add environment variables** in WSGI file
+5. **Add environment variables in WSGI file:**
+
+   ```python
+   import os
+   os.environ['SECRET_KEY'] = 'your-secret-key'
+   os.environ['ADMIN_USERNAME'] = 'admin'
+   os.environ['ADMIN_PASSWORD'] = 'SecurePassword123!'
+   ```
+
+   **📖 DETAILED GUIDE:** See [PYTHONANYWHERE_SETUP.md](PYTHONANYWHERE_SETUP.md) for complete WSGI configuration with templates!
 
 6. **Reload** and your app is live!
 

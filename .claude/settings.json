@@ -17,7 +17,17 @@
       "Bash(git commit -m \"Add executable run script\")",
       "Bash(git commit -m \"Add hosting guide and deployment configs\")",
       "Bash(python -c \"from app import create_app; app = create_app\\(\\); print\\(''✅ App created successfully with new features!''\\)\")",
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(git commit -m \"Add admin features: change password, archive elections, start new election:*)",
+      "Bash(git config --global commit.gpgsign false)",
+      "Bash(git add NEW_FEATURES.md)",
+      "Bash(git commit -m \"Add comprehensive documentation for new admin features:*)",
+      "Bash(FEATURE_SUMMARY.txt:*)",
+      "Bash(git add FEATURE_SUMMARY.txt)",
+      "Bash(git commit -m \"Add feature summary document\")",
+      "Bash(git add PYTHONANYWHERE_SETUP.md)",
+      "Bash(git commit -m \"Add detailed PythonAnywhere deployment guide with WSGI configuration:*)",
+      "Bash(git commit -m \"Update HOSTING_GUIDE with link to detailed PythonAnywhere setup:*)"
     ]
   }
 }
