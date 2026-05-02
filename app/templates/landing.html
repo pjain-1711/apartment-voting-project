@@ -84,16 +84,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-// Start landing page tour for first-time users
-document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure page is fully loaded
-    setTimeout(() => {
-        startLandingTour();
-    }, 500);
-});
-</script>
-
 <!-- Help button to manually trigger tour -->
 <button class="btn btn-info tour-help-btn" onclick="showTourManually('landing')" title="Show Tour">
     <i class="bi bi-question-circle"></i>

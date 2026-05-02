@@ -31,7 +31,7 @@
                             <div class="row g-3">
                                 {% for nominee in male_nominees %}
                                 <div class="col-md-6">
-                                    <div class="nominee-card card h-100" onclick="toggleNominee('male', {{ nominee.id }})">
+                                    <div class="nominee-card card h-100" onclick="if(event.target.type !== 'checkbox') toggleNominee('male', {{ nominee.id }})">
                                         <div class="card-body">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="male_nominee_ids" value="{{ nominee.id }}" id="male_{{ nominee.id }}">
@@ -39,7 +39,6 @@
                                                     <h6 class="mb-1">{{ nominee.name }}</h6>
                                                     <small class="text-muted">
                                                         <i class="bi bi-house-door"></i> Flat {{ nominee.flat_number }}
-                                                        <span class="ms-2"><i class="bi bi-telephone"></i> {{ nominee.phone_number }}</span>
                                                     </small>
                                                 </label>
                                             </div>
@@ -62,7 +61,7 @@
                             <div class="row g-3">
                                 {% for nominee in female_nominees %}
                                 <div class="col-md-6">
-                                    <div class="nominee-card card h-100" onclick="toggleNominee('female', {{ nominee.id }})">
+                                    <div class="nominee-card card h-100" onclick="if(event.target.type !== 'checkbox') toggleNominee('female', {{ nominee.id }})">
                                         <div class="card-body">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="female_nominee_ids" value="{{ nominee.id }}" id="female_{{ nominee.id }}">
@@ -70,7 +69,6 @@
                                                     <h6 class="mb-1">{{ nominee.name }}</h6>
                                                     <small class="text-muted">
                                                         <i class="bi bi-house-door"></i> Flat {{ nominee.flat_number }}
-                                                        <span class="ms-2"><i class="bi bi-telephone"></i> {{ nominee.phone_number }}</span>
                                                     </small>
                                                 </label>
                                             </div>
@@ -123,8 +121,8 @@ function toggleNominee(gender, nomineeId) {
     // Toggle the checkbox
     checkbox.checked = !checkbox.checked;
 
-    // Update visual selection
-    updateVisualSelection();
+    // Trigger change event manually (for programmatic changes)
+    checkbox.dispatchEvent(new Event('change'));
 }
 
 function updateVisualSelection() {
@@ -275,11 +273,6 @@ voteForm.addEventListener('submit', function() {
     clearInterval(timerInterval);
     window.removeEventListener('beforeunload', beforeUnloadHandler);
 });
-
-// Start vote selection tour for first-time users
-setTimeout(() => {
-    startVoteSelectionTour();
-}, 1000); // Wait 1 second so timer is visible
 </script>
 
 <!-- Help button to manually trigger tour -->

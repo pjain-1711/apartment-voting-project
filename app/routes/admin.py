@@ -228,15 +228,15 @@ def upload_nominees():
             return redirect(url_for('admin.upload_nominees'))
 
         # Validate file extension
-        if not file.filename.endswith(('.xlsx', '.xls')):
-            flash('Please upload an Excel file (.xlsx or .xls)', 'error')
+        if not file.filename.endswith('.csv'):
+            flash('Please upload a CSV file (.csv)', 'error')
             return redirect(url_for('admin.upload_nominees'))
 
         # Process file
-        from app.utils.excel_import import import_nominees_from_excel
+        from app.utils.csv_import import import_nominees_from_csv
 
         try:
-            success_count, error_count, errors = import_nominees_from_excel(file)
+            success_count, error_count, errors = import_nominees_from_csv(file)
 
             # Show results
             if success_count > 0:

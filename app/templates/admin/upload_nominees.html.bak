@@ -21,7 +21,7 @@
         <div class="col-md-9 col-lg-10">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="bi bi-upload"></i> Upload Nominees from CSV</h2>
+                    <h2><i class="bi bi-upload"></i> Upload Nominees from Excel</h2>
                     <a href="{{ url_for('admin.nominees') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Back to Nominees
                     </a>
@@ -31,14 +31,14 @@
                     <div class="col-lg-8">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title mb-4">Upload CSV File</h5>
+                                <h5 class="card-title mb-4">Upload Excel File</h5>
 
                                 <form method="POST" enctype="multipart/form-data">
                                     <div class="mb-4">
-                                        <label for="file" class="form-label">Select CSV File</label>
-                                        <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                                        <label for="file" class="form-label">Select Excel File</label>
+                                        <input type="file" class="form-control" id="file" name="file" accept=".xlsx,.xls" required>
                                         <small class="form-text text-muted">
-                                            Accepted formats: .csv
+                                            Accepted formats: .xlsx, .xls
                                         </small>
                                     </div>
 
@@ -74,8 +74,8 @@
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">CSV Format Example</h5>
-                                <p class="text-muted">Your CSV file should look like this:</p>
+                                <h5 class="card-title">Excel Format Example</h5>
+                                <p class="text-muted">Your Excel file should look like this:</p>
 
                                 <div class="table-responsive">
                                     <table class="table table-sm table-bordered">
@@ -124,8 +124,8 @@
                                 <h6 class="card-title">Tips:</h6>
                                 <ul class="small mb-0">
                                     <li>Optional columns (Timestamp, Email) will be ignored</li>
-                                    <li>Phone numbers are not collected from CSV</li>
-                                    <li>Wings are automatically created from the CSV sheet</li>
+                                    <li>Phone numbers are not collected from Excel</li>
+                                    <li>Wings are automatically created from the Excel sheet</li>
                                     <li>Check for errors after upload</li>
                                 </ul>
                             </div>

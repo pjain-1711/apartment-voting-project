@@ -86,15 +86,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-// Start results tour for first-time users
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        startResultsTour();
-    }, 500);
-});
-</script>
-
 <!-- Help button to manually trigger tour -->
 <button class="btn btn-info tour-help-btn" onclick="showTourManually('results')" title="Show Tour">
     <i class="bi bi-question-circle"></i>
