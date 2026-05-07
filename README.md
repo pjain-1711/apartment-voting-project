@@ -112,7 +112,6 @@ export ADMIN_PASSWORD=your_password
 
 6. **Export Data:**
    - Anonymous Export: Vote records without voter names
-   - Detailed Export: Complete voter and vote information
    - Results Export: Election results with winners
 
 ### For Voters
@@ -126,8 +125,8 @@ export ADMIN_PASSWORD=your_password
    - Phone Number
 
 3. **Select nominees:**
-   - Choose ONE male representative (if available)
-   - Choose ONE female representative (if available)
+   - Choose TWO male representative (if available)
+   - Choose TWO female representative (if available)
 
 4. **Confirm and submit:**
    - Review your selections
