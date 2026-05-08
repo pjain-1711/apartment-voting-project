@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, send_file
 from flask_login import login_required
 from app.models import Result, Wing, ConfigSetting
-from app.utils.excel_export import create_anonymous_export, create_detailed_export, create_results_export
+from app.utils.excel_export import create_results_export
 from app.utils.pdf_export import create_results_pdf
 import io
 from datetime import datetime
@@ -42,56 +42,6 @@ def view_results():
     return render_template('results/results.html',
                            results_available=True,
                            wing_results=wing_results)
-
-
-@bp.route('/export/anonymous')
-@login_required
-def export_anonymous():
-    """Export anonymous votes to Excel"""
-    try:
-        workbook = create_anonymous_export()
-
-        # Save to BytesIO object
-        output = io.BytesIO()
-        workbook.save(output)
-        output.seek(0)
-
-        filename = f'anonymous_votes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
-
-        return send_file(
-            output,
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            as_attachment=True,
-            download_name=filename
-        )
-    except Exception as e:
-        flash('Error generating export file', 'error')
-        return redirect(url_for('admin.dashboard'))
-
-
-@bp.route('/export/detailed')
-@login_required
-def export_detailed():
-    """Export detailed votes to Excel (includes voter information)"""
-    try:
-        workbook = create_detailed_export()
-
-        # Save to BytesIO object
-        output = io.BytesIO()
-        workbook.save(output)
-        output.seek(0)
-
-        filename = f'detailed_votes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
-
-        return send_file(
-            output,
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            as_attachment=True,
-            download_name=filename
-        )
-    except Exception as e:
-        flash('Error generating export file', 'error')
-        return redirect(url_for('admin.dashboard'))
 
 
 @bp.route('/export/results')
