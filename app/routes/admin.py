@@ -159,12 +159,12 @@ def add_nominee():
     name = request.form.get('name', '').strip()
     gender = request.form.get('gender')
     flat_number = request.form.get('flat_number', '').strip()
-    phone_number = request.form.get('phone_number', '').strip()
+    phone_number = request.form.get('phone_number', '').strip() or None  # Optional, set to None if empty
     wing_id = request.form.get('wing_id', type=int)
 
-    # Validation
-    if not all([name, gender, flat_number, phone_number, wing_id]):
-        flash('All fields are required', 'error')
+    # Validation - phone_number is now optional
+    if not all([name, gender, flat_number, wing_id]):
+        flash('All required fields must be filled', 'error')
         return redirect(url_for('admin.nominees'))
 
     if gender not in ['male', 'female']:

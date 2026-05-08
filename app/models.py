@@ -51,7 +51,7 @@ class Nominee(db.Model):
     name = db.Column(db.String(100), nullable=False)
     gender = db.Column(db.String(10), nullable=False)  # 'male' or 'female'
     flat_number = db.Column(db.String(20), nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=True)  # Optional field
     wing_id = db.Column(db.Integer, db.ForeignKey('wings.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
